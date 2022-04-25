@@ -6,9 +6,17 @@ const compress = require('./compress')
 const bypass = require('./bypass')
 const copyHeaders = require('./copyHeaders')
 
+function isImage(url) {
+    return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+  }
+
 function proxy(req, res) {
+  url = req.params.url
+  validateUrl = isImage(url)
+  if (!validateUrl) return redirect(req, res)
+  
   request.get(
-    req.params.url,
+    url,
     {
       headers: {
         ...pick(req.headers, ['cookie', 'dnt', 'referer']),
